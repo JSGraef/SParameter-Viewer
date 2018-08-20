@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>S-Parameter Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover distance, time, and pace for any sport">
+    <meta name="author" content="Josh Graef">
+
+    <!-- Le styles -->
+    <link href="./assets/css/bootstrap.css" rel="stylesheet">
+    <link href="./assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/css/jquery.fileupload-ui.css">
+    
+    <style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+     
+     #dygraphs {
+	  position: absolute; 
+	  left: 10px; 
+	  right: 10px; 
+	  width: 95%;
+	  top: 50px; 
+	  bottom: 10px;
+	}
+    </style>
+
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <link rel="shortcut icon" href="./assets/ico/favicon.ico">
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="#">S-Parameter Viewer </a> 
+  
+            <ul class="nav">
+              <li><a href="">By Josh Graef</a></li>
+              <!-- <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li> -->
+            </ul>
+            
+            <a data-toggle="modal" href="#myModal" class="btn btn-primary pull-right selectSparams" data-backdrop="true" data-controls-modal="event-modal" data-keyboard="true"><i class="icon-th icon-white"></i> Select S-Parameters</a>
+            
+			<div class="btn-group pull-right">
+			  <button class="btn btn-warning dropdown-toggle pull-right" data-toggle="dropdown">
+			  	<i class="icon-file icon-white"></i> File
+			    <span class="caret"></span>
+			  </button>
+			  <ul class="dropdown-menu pull-right">
+			  	<li>
+			  		<a class="fileinput-button"><i class="icon-upload"></i> Load S-Parameter File
+			   			<input type="file" name="file" id="files" class="readfile" multiple>
+			  		</a>
+			  	</li>
+				<li><a class="clearFile"><i class="icon-remove"></i> Clear File</a></li>
+			  </ul>
+			</div>
+			
+			<a data-toggle="modal" href="#helpModal" class="btn btn-info pull-right" data-backdrop="true" data-controls-modal="event-modal"><i class="icon-info-sign icon-white"></i></a>
+
+        </div>
+      </div>
+    </div>
+
+   
+  	<!-- SParam picker modal content -->
+  	<div id="myModal" class="modal hide fade">
+    	<div class="modal-header">
+      		<button class="close" data-dismiss="modal" class="cancel">&times;</button>
+      		<h3>Available S-Parameters</h3>
+    	</div>
+    	<div class="modal-body">
+			<center><span id="showSParamButtons"></span></center>         
+    	</div>
+    	<div class="modal-footer">
+      		<a href="#" class="btn cancel" data-dismiss="modal">Cancel</a>
+      		<a href="#" class="btn btn-primary" id="apply">Apply</a>
+    	</div>
+  	</div> 
+  	
+  	<!-- Legend help modal content -->
+  	<div id="helpModal" class="modal hide fade">
+    	<div class="modal-header">
+      		<button class="close" data-dismiss="modal">&times;</button>
+      		<h3>Graph Help</h3>
+    	</div>
+    	<div class="modal-body">
+    		<ul>
+			<li>Click + Drag to zoom</li>  
+			<li>Double click to reset zoom</li>   
+			<li>Shift + Click to pan</li>  
+			</ul>  
+    	</div>
+    	<div class="modal-footer">
+      		<a href="#" class="btn btn-primary" data-dismiss="modal">OK!</a>
+    	</div>
+  	</div> 
+  	         
+	
+	<div id="graph"></div>
+	
+	<!-- <div class="container">
+
+		<div class="row">
+			
+		</div>
+
+    </div> <!-- /container -->
+   
+
+    <!-- Javascript -->
+    <script src="./assets/js/jquery.js"></script>
+    <script src="./assets/js/bootstrap-transition.js"></script>
+    <script src="./assets/js/bootstrap-modal.js"></script>
+    <script src="./assets/js/bootstrap-dropdown.js"></script>
+    <script src="./assets/js/bootstrap-button.js"></script>
+    
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script src="./assets/js/SParamParser.js"></script>
+    <script src="./assets/js/ChartOperations.js"></script>
+    <script src="./assets/js/dygraph-combined.js"></script>
+    
+    
+    
+    <script>
+    document.querySelector('.selectSparams').addEventListener('click', function (evt) 
+    	{ 
+    		if(bReadFile == false)
+    			readFile(); 
+    	}, false);
+    	
+    document.querySelector('.clearFile').addEventListener('click', function (evt) 
+    	{ 
+    		removeGraph();
+    		clearFile();
+    	}, false);
+    	
+    document.querySelector('.cancel').addEventListener('click', function (evt) 
+    	{ 
+    		// Pop the buttons back up according to tempsparam list
+    		resetButtons();
+    	}, false);
+    	
+    document.querySelector('#apply').addEventListener('click', function (evt) 
+    	{ 
+    		if(bReadFile == true)   
+    		{
+    			addTempSParams();    					
+    			drawChart(); 
+    		}
+    			
+    		$('#myModal').modal('hide')
+    	}, false);
+    	
+    document.querySelector('#showSParamButtons').addEventListener('click', function(evt) 
+    	{    			
+    		if (evt.target.tagName.toLowerCase() == 'button') 
+    			{
+      				var which = evt.target.getAttribute('sparam');
+      				tempSParamNames.push(which);
+    			}
+  		}, false);
+ 
+    	
+</script>
+
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-5022417-10']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+  </body>
+</html>
